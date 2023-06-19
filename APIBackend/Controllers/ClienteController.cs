@@ -106,5 +106,31 @@ namespace APIBackend.Controllers
                 return StatusCode(StatusCodes.Status200OK, new { mensaje = ex.Message });
             }
         }
+
+        [HttpDelete]
+        [Route("eliminarCliente/{idCliente:int}")]
+        public IActionResult eliminarCliente(int idCliente)
+        {
+            Cliente oCliente = _dbcontext.Clientes.Find(idCliente);
+            Persona oPersona = _dbcontext.Personas.Find(idCliente);
+
+            if (oCliente == null || oPersona == null)
+            {
+                return BadRequest("Cliente o persona no encontrada");
+            }
+
+            try
+            {
+                _dbcontext.Clientes.Remove(oCliente);
+                _dbcontext.Personas.Remove(oPersona);
+                _dbcontext.SaveChanges();
+
+                return StatusCode(StatusCodes.Status200OK, new { mensaje = "Cliente y persona eliminada" });
+            }
+            catch(Exception ex)
+            {
+                return StatusCode(StatusCodes.Status200OK, new { mensaje = ex.Message });
+            }
+        }
     }
 }

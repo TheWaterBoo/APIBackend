@@ -3723,19 +3723,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\pedro\\.nuget\\packages\\": {}
+    "C:\\Users\\USUARIO\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\pedro\\source\\repos\\APIBackend\\APIBackend\\APIBackend.csproj",
+      "projectUniqueName": "C:\\Users\\USUARIO\\Documents\\GitHub\\APIBackend\\APIBackend\\APIBackend.csproj",
       "projectName": "APIBackend",
-      "projectPath": "C:\\Users\\pedro\\source\\repos\\APIBackend\\APIBackend\\APIBackend.csproj",
-      "packagesPath": "C:\\Users\\pedro\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\pedro\\source\\repos\\APIBackend\\APIBackend\\obj\\",
+      "projectPath": "C:\\Users\\USUARIO\\Documents\\GitHub\\APIBackend\\APIBackend\\APIBackend.csproj",
+      "packagesPath": "C:\\Users\\USUARIO\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\USUARIO\\Documents\\GitHub\\APIBackend\\APIBackend\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\pedro\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\USUARIO\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
