@@ -26,7 +26,7 @@ namespace APIBackend.Controllers
                 lista = _dbcontext.Movimientos.ToList();
                 return StatusCode(StatusCodes.Status200OK, new { mensaje = "ok", response = lista });
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status200OK, new { mensaje = ex.Message });
             }
@@ -55,7 +55,7 @@ namespace APIBackend.Controllers
         {
             Movimiento oMovimiento = _dbcontext.Movimientos.Find(objMovimiento.Id);
 
-            if(oMovimiento == null)
+            if (oMovimiento == null)
             {
                 return BadRequest("Movimiento no encontrado");
             }
@@ -67,6 +67,30 @@ namespace APIBackend.Controllers
                 oMovimiento.Saldo = objMovimiento.Saldo is null ? oMovimiento.Saldo : objMovimiento.Saldo;
 
                 return StatusCode(StatusCodes.Status200OK, new { mensaje = "Movimiento editado" });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status200OK, new { mensaje = ex.Message });
+            }
+        }
+
+        [HttpDelete]
+        [Route("eliminarMovimiento/{idMovimiento}")]
+        public IActionResult EliminarMovimiento(int idMovimiento)
+        {
+            Movimiento oMovimiento = _dbcontext.Movimientos.Find(idMovimiento);
+
+            if(oMovimiento == null)
+            {
+                return BadRequest("Movimiento no encontrado");
+            }
+
+            try
+            {
+                _dbcontext.Movimientos.Remove(oMovimiento);
+                _dbcontext.SaveChanges();
+
+                return StatusCode(StatusCodes.Status200OK, new { mensaje = "Movimiento eliminado!" });
             }
             catch(Exception ex)
             {
