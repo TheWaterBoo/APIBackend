@@ -46,3 +46,8 @@ INSERT INTO cliente(clienteID,contraseña,estado) values
 (3,'9887','false')
 
 SELECT * FROM cliente
+
+INSERT INTO cuenta(id, numeroCuenta, tipoCuenta, saldoInicial, estado) values
+(1,'478758','ahorro','2000','true')
+
+SELECT * FROM cuenta

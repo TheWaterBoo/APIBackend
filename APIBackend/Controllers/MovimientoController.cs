@@ -34,7 +34,7 @@ namespace APIBackend.Controllers
 
         [HttpPost]
         [Route("crearMovimiento")]
-        public IActionResult crearMovimiento([FromBody] Movimiento objMovimiento)
+        public IActionResult CrearMovimiento([FromBody] Movimiento objMovimiento)
         {
             try
             {
@@ -44,6 +44,31 @@ namespace APIBackend.Controllers
                 return StatusCode(StatusCodes.Status200OK, new { mensaje = "nuevo movimiento creado" });
             }
             catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status200OK, new { mensaje = ex.Message });
+            }
+        }
+
+        [HttpPut]
+        [Route("editarMovimiento")]
+        public IActionResult EditarMovimiento([FromBody] Movimiento objMovimiento)
+        {
+            Movimiento oMovimiento = _dbcontext.Movimientos.Find(objMovimiento.Id);
+
+            if(oMovimiento == null)
+            {
+                return BadRequest("Movimiento no encontrado");
+            }
+
+            try
+            {
+                oMovimiento.TipoMovimiento = objMovimiento.TipoMovimiento is null ? oMovimiento.TipoMovimiento : objMovimiento.TipoMovimiento;
+                oMovimiento.Fecha = objMovimiento.Fecha is null ? oMovimiento.Fecha : objMovimiento.Fecha;
+                oMovimiento.Saldo = objMovimiento.Saldo is null ? oMovimiento.Saldo : objMovimiento.Saldo;
+
+                return StatusCode(StatusCodes.Status200OK, new { mensaje = "Movimiento editado" });
+            }
+            catch(Exception ex)
             {
                 return StatusCode(StatusCodes.Status200OK, new { mensaje = ex.Message });
             }
