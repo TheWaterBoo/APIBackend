@@ -16,9 +16,7 @@ CREATE TABLE cliente(
 clienteID int primary key,
 contraseña varchar(100),
 estado varchar(20),
-idPersona int,
-foreign key (clienteID) references persona(id),
-foreign key (idPersona) references persona(id)
+foreign key (clienteID) references persona(id)
 );
 
 CREATE TABLE cuenta(
@@ -26,11 +24,7 @@ id int primary key,
 numeroCuenta varchar(30),
 tipoCuenta varchar(30),
 saldoInicial int,
-estado varchar(30),
-idCliente int,
-idPersona int,
-foreign key (idCliente) references cliente(clienteID),
-foreign key (idPersona) references cliente(clienteID)
+estado varchar(30)
 );
 
 CREATE TABLE movimientos(
@@ -38,9 +32,7 @@ id int primary key,
 fecha datetime,
 tipoMovimiento varchar(100),
 valor int,
-saldo int,
-idCuenta int,
-foreign key (idCuenta) references cuenta(id)
+saldo int
 );
 
 DROP DATABASE BACKENDAPI
