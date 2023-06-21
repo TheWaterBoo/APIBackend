@@ -34,7 +34,8 @@ namespace APIBackend.Controllers
                         TipoCuenta = c.oCuenta.TipoCuenta,
                         SaldoInicial = (int)c.oCuenta.SaldoInicial,
                         Estado = c.oCuenta.Estado,
-                        Valor = (int)c.Valor
+                        Valor = (int)c.Valor,
+                        SaldoDisponible = (int)c.Saldo
 
                     }).ToList();
 
@@ -72,7 +73,8 @@ namespace APIBackend.Controllers
                         TipoCuenta = c.oCuenta.TipoCuenta,
                         SaldoInicial = (int)c.oCuenta.SaldoInicial,
                         Estado = c.oCuenta.Estado,
-                        Valor = (int)c.Valor
+                        Valor = (int)c.Valor,
+                        SaldoDisponible = (int)c.Saldo
 
                     })
                     .FirstOrDefault();
@@ -115,6 +117,10 @@ namespace APIBackend.Controllers
                 objMovimiento.oCuenta = oCuenta;
                 objMovimiento.oCuenta.oCliente = oCliente;
                 objMovimiento.oCuenta.oCliente.oPersona = oPersona;
+
+                int saldoInicial = (int)oCuenta.SaldoInicial;
+                int saldoDisponible = saldoInicial - (int)objMovimiento.Valor;
+                objMovimiento.Saldo = saldoDisponible;
 
                 _dbcontext.Movimientos.Add(objMovimiento);
                 _dbcontext.SaveChanges();

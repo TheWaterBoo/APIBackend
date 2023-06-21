@@ -14,6 +14,7 @@ public partial class Movimiento
 
     public int? Valor { get; set; }
 
+    [JsonIgnore]
     public int? Saldo { get; set; }
 
     [JsonIgnore]
