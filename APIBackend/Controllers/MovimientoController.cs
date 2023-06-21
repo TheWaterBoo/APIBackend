@@ -34,7 +34,7 @@ namespace APIBackend.Controllers
                         TipoCuenta = c.oCuenta.TipoCuenta,
                         SaldoInicial = (int)c.oCuenta.SaldoInicial,
                         Estado = c.oCuenta.Estado,
-                        Valor = (int)c.Valor,
+                        Movimiento = c.TipoMovimiento,
                         SaldoDisponible = (int)c.Saldo
 
                     }).ToList();
@@ -73,7 +73,7 @@ namespace APIBackend.Controllers
                         TipoCuenta = c.oCuenta.TipoCuenta,
                         SaldoInicial = (int)c.oCuenta.SaldoInicial,
                         Estado = c.oCuenta.Estado,
-                        Valor = (int)c.Valor,
+                        Movimiento = c.TipoMovimiento,
                         SaldoDisponible = (int)c.Saldo
 
                     })
@@ -119,8 +119,23 @@ namespace APIBackend.Controllers
                 objMovimiento.oCuenta.oCliente.oPersona = oPersona;
 
                 int saldoInicial = (int)oCuenta.SaldoInicial;
-                int saldoDisponible = saldoInicial - (int)objMovimiento.Valor;
-                objMovimiento.Saldo = saldoDisponible;
+                int valorMovimiento = (int)objMovimiento.Valor;
+
+                string[] cadena = objMovimiento.TipoMovimiento.Split(' ');
+                string tipoMovimiento = cadena[0].ToLower();
+
+                if (tipoMovimiento == "retiro")
+                {
+                    objMovimiento.Saldo = saldoInicial - valorMovimiento;
+                }
+                else if (tipoMovimiento == "deposito")
+                {
+                    objMovimiento.Saldo = saldoInicial + valorMovimiento;
+                }
+                else
+                {
+                    return BadRequest("Tipo de movimiento inválido");
+                }
 
                 _dbcontext.Movimientos.Add(objMovimiento);
                 _dbcontext.SaveChanges();

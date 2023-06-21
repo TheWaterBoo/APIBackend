@@ -8,7 +8,7 @@
         public string TipoCuenta { get; set; }
         public int SaldoInicial { get; set; }
         public string Estado { get; set; }
-        public int Valor { get; set; }
+        public string Movimiento { get; set; }
         public int SaldoDisponible { get; set; }
     }
 }
