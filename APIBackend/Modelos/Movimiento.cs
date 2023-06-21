@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace APIBackend.Modelos;
 
@@ -15,5 +16,6 @@ public partial class Movimiento
 
     public int? Saldo { get; set; }
 
-    public virtual Cuenta oCuenta { get; set; } = null!;
+    [JsonIgnore]
+    public virtual Cuenta? oCuenta { get; set; } = null!;
 }

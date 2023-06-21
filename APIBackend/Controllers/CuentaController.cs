@@ -84,11 +84,17 @@ namespace APIBackend.Controllers
         public IActionResult crearCuenta([FromBody] Cuenta objCuenta)
         {
             Cliente oCliente = _dbcontext.Clientes.Find(objCuenta.Id);
+
+            if (oCliente == null)
+            {
+                return BadRequest("Cliente no encontrado!");
+            }
+
             Persona oPersona = _dbcontext.Personas.Find(oCliente.ClienteId);
 
-            if (oCliente == null || oPersona == null)
+            if (oPersona == null)
             {
-                return BadRequest("Cliente o persona no encontrada!");
+                return BadRequest("persona no encontrada!");
             }
 
             try

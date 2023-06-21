@@ -16,7 +16,8 @@ public partial class Cuenta
 
     public string? Estado { get; set; }
 
-    public virtual Cliente oCliente { get; set; } = null!;
+    [JsonIgnore]
+    public virtual Cliente? oCliente { get; set; } = null!;
 
     [JsonIgnore]
     public virtual Movimiento? Movimiento { get; set; }

@@ -6,6 +6,7 @@ namespace APIBackend.Modelos;
 
 public partial class Persona
 {
+    [JsonIgnore]
     public int Id { get; set; }
 
     public string? Nombre { get; set; }

@@ -89,17 +89,29 @@ namespace APIBackend.Controllers
         [Route("crearMovimiento")]
         public IActionResult CrearMovimiento([FromBody] Movimiento objMovimiento)
         {
-            Cuenta oCuenta = _dbcontext.Cuenta.Find(objMovimiento.Id);
-            Cliente oCliente = _dbcontext.Clientes.Find(oCuenta.Id);
-            Persona oPersona = _dbcontext.Personas.Find(oCliente.ClienteId);
-
-            if (oCliente == null || oPersona == null || oCuenta == null)
-            {
-                return BadRequest("No se encontro la persona o cliente proporcionado");
-            }
-
             try
             {
+                Cuenta oCuenta = _dbcontext.Cuenta.Find(objMovimiento.Id);
+
+                if(oCuenta == null)
+                {
+                    return BadRequest("No se encontro la cuenta");
+                }
+
+                Cliente oCliente = _dbcontext.Clientes.Find(oCuenta.Id);
+
+                if(oCliente == null)
+                {
+                    return BadRequest("No se encontro el cliente");
+                }
+
+                Persona oPersona = _dbcontext.Personas.Find(oCliente.ClienteId);
+
+                if (oPersona == null)
+                {
+                    return BadRequest("No se encontro la persona proporcionada");
+                }
+
                 objMovimiento.oCuenta = oCuenta;
                 objMovimiento.oCuenta.oCliente = oCliente;
                 objMovimiento.oCuenta.oCliente.oPersona = oPersona;
