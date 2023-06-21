@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace APIBackend.Modelos;
 
@@ -14,4 +15,9 @@ public partial class Cuenta
     public int? SaldoInicial { get; set; }
 
     public string? Estado { get; set; }
+
+    public virtual Cliente oCliente { get; set; } = null!;
+
+    [JsonIgnore]
+    public virtual Movimiento? Movimiento { get; set; }
 }

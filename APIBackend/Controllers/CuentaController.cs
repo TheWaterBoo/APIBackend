@@ -1,4 +1,5 @@
 ﻿using APIBackend.Modelos;
+using APIBackend.Responses;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -19,16 +20,62 @@ namespace APIBackend.Controllers
         [Route("listarCuentas")]
         public IActionResult ListarCuenta()
         {
-            List<Cuenta> lista = new List<Cuenta>();
+            //List<Cuenta> lista = new List<Cuenta>();
 
             try
             {
-                lista = _dbcontext.Cuenta.ToList();
-                return StatusCode(StatusCodes.Status200OK, new { mensaje = "ok", response = lista });
+                var lista = _dbcontext.Cuenta.Include(c => c.oCliente)
+                    .ThenInclude(m => m.oPersona)
+                    .Select(c => new CuentaRes
+                    {
+                        numeroCuenta = c.NumeroCuenta,
+                        tipo = c.TipoCuenta,
+                        saldoInicial = (int)c.SaldoInicial,
+                        estado = c.Estado,
+                        nombreCliente = c.oCliente.oPersona.Nombre
+
+                    }).ToList();
+
+                return StatusCode(StatusCodes.Status200OK, new { response = lista });
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status200OK, new { mensaje = ex.Message, response = lista });
+                return StatusCode(StatusCodes.Status200OK, new { mensaje = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [Route("cuenta/{idCuenta:int}")]
+        public IActionResult Cuenta(int idCuenta)
+        {
+            Cuenta oCuenta = _dbcontext.Cuenta.Find(idCuenta);
+
+            if (oCuenta == null)
+            {
+                //Excepcion por si no se encuentra el cliente con el id
+                return BadRequest("Cliente no encontrado!");
+            }
+
+            try
+            {
+                var cuentaPorId = _dbcontext.Cuenta.Include(c => c.oCliente)
+                    .ThenInclude(m => m.oPersona)
+                    .Where(p => p.Id == idCuenta)
+                    .Select(c => new CuentaRes
+                    {
+                        numeroCuenta = c.NumeroCuenta,
+                        tipo = c.TipoCuenta,
+                        saldoInicial = (int)c.SaldoInicial,
+                        estado = c.Estado,
+                        nombreCliente = c.oCliente.oPersona.Nombre
+
+                    }).FirstOrDefault();
+
+                return StatusCode(StatusCodes.Status200OK, new { response = cuentaPorId });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status200OK, new { mensaje = ex.Message });
             }
         }
 
@@ -36,8 +83,19 @@ namespace APIBackend.Controllers
         [Route("crearCuenta")]
         public IActionResult crearCuenta([FromBody] Cuenta objCuenta)
         {
+            Cliente oCliente = _dbcontext.Clientes.Find(objCuenta.Id);
+            Persona oPersona = _dbcontext.Personas.Find(oCliente.ClienteId);
+
+            if (oCliente == null || oPersona == null)
+            {
+                return BadRequest("Cliente o persona no encontrada!");
+            }
+
             try
             {
+                objCuenta.oCliente = oCliente;
+                objCuenta.oCliente.oPersona = oPersona;
+
                 _dbcontext.Cuenta.Add(objCuenta);
                 _dbcontext.SaveChanges();
 

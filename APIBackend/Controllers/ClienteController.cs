@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 using Microsoft.EntityFrameworkCore;
 using APIBackend.Modelos;
+using APIBackend.Responses;
 
 namespace APIBackend.Controllers
 {
@@ -21,16 +22,26 @@ namespace APIBackend.Controllers
         [Route("ListarClientes")]
 
         public IActionResult ListarClientes() {
-            List<Cliente> lista = new List<Cliente>();
+            //List<Cliente> lista = new List<Cliente>();
 
             try
             {
-                lista = _dbcontext.Clientes.Include(c => c.oPersona).ToList();
-                return StatusCode(StatusCodes.Status200OK, new { mensaje = "ok", response = lista });
+                var lista = _dbcontext.Clientes.Include(c => c.oPersona)
+                    .Select(c => new ClienteRes
+                    {
+                        Nombre = c.oPersona.Nombre,
+                        Direccion = c.oPersona.Direccion,
+                        Telefono = c.oPersona.Telefono,
+                        Contraseña = c.Contraseña,
+                        Estado = c.Estado
+
+                    }).ToList();
+
+                return StatusCode(StatusCodes.Status200OK, new { response = lista });
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status200OK, new { mensaje = ex.Message, response = lista });
+                return StatusCode(StatusCodes.Status200OK, new { mensaje = ex.Message });
             }
         }
 
@@ -50,13 +61,23 @@ namespace APIBackend.Controllers
 
             try
             {
-                oCliente = _dbcontext.Clientes.Include(c => c.oPersona).Where(p => p.ClienteId == idCliente).FirstOrDefault();
+                var clientePorId = _dbcontext.Clientes.Include(c => c.oPersona)
+                    .Where(p => p.ClienteId == idCliente)
+                    .Select(c => new ClienteRes
+                    {
+                        Nombre = c.oPersona.Nombre,
+                        Direccion = c.oPersona.Direccion,
+                        Telefono = c.oPersona.Telefono,
+                        Contraseña = c.Contraseña,
+                        Estado = c.Estado
 
-                return StatusCode(StatusCodes.Status200OK, new { mensaje = "ok", response = oCliente });
+                    }).FirstOrDefault();
+
+                return StatusCode(StatusCodes.Status200OK, new { response = clientePorId });
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status200OK, new { mensaje = ex.Message, response = oCliente });
+                return StatusCode(StatusCodes.Status200OK, new { mensaje = ex.Message });
             }
         }
 

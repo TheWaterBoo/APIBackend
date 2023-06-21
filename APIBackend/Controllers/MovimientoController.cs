@@ -1,4 +1,5 @@
 ﻿using APIBackend.Modelos;
+using APIBackend.Responses;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -19,14 +20,66 @@ namespace APIBackend.Controllers
         [Route("listarMovimientos")]
         public IActionResult ListarMovimientos()
         {
-            List<Movimiento> lista = new List<Movimiento>();
+            //List<Movimiento> lista = new List<Movimiento>();
 
             try
             {
-                lista = _dbcontext.Movimientos.ToList();
-                return StatusCode(StatusCodes.Status200OK, new { mensaje = "ok", response = lista });
+                var lista = _dbcontext.Movimientos.Include(c => c.oCuenta)
+                    .ThenInclude(m => m.oCliente)
+                    .Select(c => new MovimientoRes
+                    {
+                        Fecha = (DateTime)c.Fecha,
+                        NombreCliente = c.oCuenta.oCliente.oPersona.Nombre,
+                        NumeroCuenta = c.oCuenta.NumeroCuenta,
+                        TipoCuenta = c.oCuenta.TipoCuenta,
+                        SaldoInicial = (int)c.oCuenta.SaldoInicial,
+                        Estado = c.oCuenta.Estado,
+                        Valor = (int)c.Valor
+
+                    }).ToList();
+
+                return StatusCode(StatusCodes.Status200OK, new { response = lista });
             }
             catch(Exception ex)
+            {
+                return StatusCode(StatusCodes.Status200OK, new { mensaje = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [Route("movimiento/{idMovimiento:int}")]
+        public IActionResult Movimiento(int idMovimiento)
+        {
+            Movimiento oMovimiento = _dbcontext.Movimientos.Find(idMovimiento);
+
+            if (oMovimiento == null)
+            {
+                //Excepcion por si no se encuentra el cliente con el id
+                return BadRequest("Cliente no encontrado!");
+            }
+
+            try
+            {
+                var movimientoporId = _dbcontext.Movimientos.Include(c => c.oCuenta)
+                    .ThenInclude(m => m.oCliente)
+                    .ThenInclude(cli => cli.oPersona)
+                    .Where(p => p.Id == idMovimiento)
+                    .Select(c => new MovimientoRes
+                    {
+                        Fecha = (DateTime)c.Fecha,
+                        NombreCliente = c.oCuenta.oCliente.oPersona.Nombre,
+                        NumeroCuenta = c.oCuenta.NumeroCuenta,
+                        TipoCuenta = c.oCuenta.TipoCuenta,
+                        SaldoInicial = (int)c.oCuenta.SaldoInicial,
+                        Estado = c.oCuenta.Estado,
+                        Valor = (int)c.Valor
+
+                    })
+                    .FirstOrDefault();
+
+                return StatusCode(StatusCodes.Status200OK, new { response = movimientoporId });
+            }
+            catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status200OK, new { mensaje = ex.Message });
             }
@@ -36,8 +89,21 @@ namespace APIBackend.Controllers
         [Route("crearMovimiento")]
         public IActionResult CrearMovimiento([FromBody] Movimiento objMovimiento)
         {
+            Cuenta oCuenta = _dbcontext.Cuenta.Find(objMovimiento.Id);
+            Cliente oCliente = _dbcontext.Clientes.Find(oCuenta.Id);
+            Persona oPersona = _dbcontext.Personas.Find(oCliente.ClienteId);
+
+            if (oCliente == null || oPersona == null || oCuenta == null)
+            {
+                return BadRequest("No se encontro la persona o cliente proporcionado");
+            }
+
             try
             {
+                objMovimiento.oCuenta = oCuenta;
+                objMovimiento.oCuenta.oCliente = oCliente;
+                objMovimiento.oCuenta.oCliente.oPersona = oPersona;
+
                 _dbcontext.Movimientos.Add(objMovimiento);
                 _dbcontext.SaveChanges();
 
@@ -69,6 +135,29 @@ namespace APIBackend.Controllers
                 return StatusCode(StatusCodes.Status200OK, new { mensaje = "Movimiento editado" });
             }
             catch(Exception ex)
+            {
+                return StatusCode(StatusCodes.Status200OK, new { mensaje = ex.Message });
+            }
+        }
+
+        [HttpDelete]
+        [Route("eliminarMovimiento/{idMovimiento}")]
+        public IActionResult EliminarMovimiento(int idMovimiento)
+        {
+            Movimiento oMovimiento = _dbcontext.Movimientos.Find(idMovimiento);
+
+            if (oMovimiento == null)
+            {
+                return BadRequest("Movimiento no encontrado");
+            }
+
+            try
+            {
+                _dbcontext.Movimientos.Remove(oMovimiento);
+                _dbcontext.SaveChanges();
+                return StatusCode(StatusCodes.Status200OK, new { mensaje = "Movimiento eliminado" });
+            }
+            catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status200OK, new { mensaje = ex.Message });
             }

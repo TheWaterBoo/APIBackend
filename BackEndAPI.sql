@@ -7,7 +7,6 @@ id int primary key identity,
 nombre varchar(100),
 genero varchar(20),
 edad int,
-identificacion varchar(20),
 direccion varchar(255),
 telefono varchar(100)
 );
@@ -24,20 +23,22 @@ id int primary key,
 numeroCuenta varchar(30),
 tipoCuenta varchar(30),
 saldoInicial int,
-estado varchar(30)
+estado varchar(30),
+foreign key (id) references cliente(clienteID)
 );
 
 CREATE TABLE movimientos(
 id int primary key,
-fecha datetime,
+fecha date,
 tipoMovimiento varchar(100),
 valor int,
-saldo int
+saldo int,
+foreign key (id) references cuenta(id)
 );
 
 DROP DATABASE BACKENDAPI
 
-INSERT INTO persona(nombre, genero, edad, identificacion, direccion, telefono) values
+INSERT INTO persona(nombre, genero, edad, direccion, telefono) values
 ('mary','mujer',28,'si','Otavalo s/n y principal',098254785)
 
 SELECT * FROM persona

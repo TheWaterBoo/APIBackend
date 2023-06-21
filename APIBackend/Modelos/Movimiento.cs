@@ -14,4 +14,6 @@ public partial class Movimiento
     public int? Valor { get; set; }
 
     public int? Saldo { get; set; }
+
+    public virtual Cuenta oCuenta { get; set; } = null!;
 }

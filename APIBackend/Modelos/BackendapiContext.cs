@@ -23,16 +23,15 @@ public partial class BackendapiContext : DbContext
 
     public virtual DbSet<Persona> Personas { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
+        
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Cliente>(entity =>
         {
-            entity.HasKey(e => e.ClienteId).HasName("PK__cliente__C2FF24BD72AF81FA");
+            entity.HasKey(e => e.ClienteId).HasName("PK__cliente__C2FF24BD5EC29BB0");
 
             entity.ToTable("cliente");
 
@@ -56,7 +55,7 @@ public partial class BackendapiContext : DbContext
 
         modelBuilder.Entity<Cuenta>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__cuenta__3213E83F9E43245E");
+            entity.HasKey(e => e.Id).HasName("PK__cuenta__3213E83F930E8B98");
 
             entity.ToTable("cuenta");
 
@@ -76,11 +75,16 @@ public partial class BackendapiContext : DbContext
                 .HasMaxLength(30)
                 .IsUnicode(false)
                 .HasColumnName("tipoCuenta");
+
+            entity.HasOne(d => d.oCliente).WithOne(p => p.Cuenta)
+                .HasForeignKey<Cuenta>(d => d.Id)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__cuenta__id__3C69FB99");
         });
 
         modelBuilder.Entity<Movimiento>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__movimien__3213E83FA7BB749C");
+            entity.HasKey(e => e.Id).HasName("PK__movimien__3213E83FA8E11310");
 
             entity.ToTable("movimientos");
 
@@ -88,7 +92,7 @@ public partial class BackendapiContext : DbContext
                 .ValueGeneratedNever()
                 .HasColumnName("id");
             entity.Property(e => e.Fecha)
-                .HasColumnType("datetime")
+                .HasColumnType("date")
                 .HasColumnName("fecha");
             entity.Property(e => e.Saldo).HasColumnName("saldo");
             entity.Property(e => e.TipoMovimiento)
@@ -96,11 +100,16 @@ public partial class BackendapiContext : DbContext
                 .IsUnicode(false)
                 .HasColumnName("tipoMovimiento");
             entity.Property(e => e.Valor).HasColumnName("valor");
+
+            entity.HasOne(d => d.oCuenta).WithOne(p => p.Movimiento)
+                .HasForeignKey<Movimiento>(d => d.Id)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__movimientos__id__3F466844");
         });
 
         modelBuilder.Entity<Persona>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__persona__3213E83F9261B0AF");
+            entity.HasKey(e => e.Id).HasName("PK__persona__3213E83FF057C3B1");
 
             entity.ToTable("persona");
 
@@ -114,10 +123,6 @@ public partial class BackendapiContext : DbContext
                 .HasMaxLength(20)
                 .IsUnicode(false)
                 .HasColumnName("genero");
-            entity.Property(e => e.Identificacion)
-                .HasMaxLength(20)
-                .IsUnicode(false)
-                .HasColumnName("identificacion");
             entity.Property(e => e.Nombre)
                 .HasMaxLength(100)
                 .IsUnicode(false)
