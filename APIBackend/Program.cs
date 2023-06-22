@@ -21,6 +21,8 @@ builder.Services.AddControllers().AddJsonOptions(opt =>
 });
 
 builder.Services.AddScoped<ClientInterface, ClientService>();
+builder.Services.AddScoped<CuentaInterface, CuentaService>();
+builder.Services.AddScoped<MovimientoInterface, MovimientoService>();
 
 var app = builder.Build();
 

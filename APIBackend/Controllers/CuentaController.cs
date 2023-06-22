@@ -1,9 +1,6 @@
 ﻿using APIBackend.Modelos;
-using APIBackend.Modelos.Responses;
 using APIBackend.Services.Interfaces;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace APIBackend.Controllers
 {

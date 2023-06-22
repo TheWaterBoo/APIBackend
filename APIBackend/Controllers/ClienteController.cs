@@ -13,7 +13,7 @@ namespace APIBackend.Controllers
     public class ClienteController : ControllerBase
     {
         private readonly ClientInterface _clientService;
-        public ClienteController(BackendapiContext _context, ClientInterface _service)
+        public ClienteController(ClientInterface _service)
         {
             _clientService = _service;
         }
@@ -21,8 +21,8 @@ namespace APIBackend.Controllers
         //Obtener toda la lista de clientes
         [HttpGet]
         [Route("ListarClientes")]
-        public IActionResult ListarClientes() {
-
+        public IActionResult ListarClientes() 
+        {
             try
             {
                 var lista = _clientService.ListarClientes();

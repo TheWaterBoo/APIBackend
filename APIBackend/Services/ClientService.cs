@@ -1,7 +1,4 @@
 ﻿using APIBackend.Services.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using APIBackend.Modelos;
 using APIBackend.Modelos.Responses;
 using Microsoft.EntityFrameworkCore;
@@ -36,7 +33,6 @@ namespace APIBackend.Services
             }
             catch (Exception ex)
             {
-                // Puedes lanzar una excepción personalizada si lo deseas.
                 throw new Exception("Error al obtener la lista de clientes", ex);
             }
         }
