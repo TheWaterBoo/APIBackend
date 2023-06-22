@@ -1,4 +1,4 @@
-﻿namespace APIBackend.Responses
+﻿namespace APIBackend.Modelos.Responses
 {
     public class CuentaRes
     {

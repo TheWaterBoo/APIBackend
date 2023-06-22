@@ -1,5 +1,6 @@
 ﻿using APIBackend.Modelos;
-using APIBackend.Responses;
+using APIBackend.Modelos.Responses;
+using APIBackend.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -10,10 +11,10 @@ namespace APIBackend.Controllers
     [ApiController]
     public class CuentaController : ControllerBase
     {
-        public readonly BackendapiContext _dbcontext;
-        public CuentaController(BackendapiContext _context)
+        private readonly CuentaInterface _cuentaInterface;
+        public CuentaController(CuentaInterface _service)
         {
-            _dbcontext = _context;
+            _cuentaInterface = _service;
         }
 
         [HttpGet]
@@ -24,18 +25,7 @@ namespace APIBackend.Controllers
 
             try
             {
-                var lista = _dbcontext.Cuenta.Include(c => c.oCliente)
-                    .ThenInclude(m => m.oPersona)
-                    .Select(c => new CuentaRes
-                    {
-                        numeroCuenta = c.NumeroCuenta,
-                        tipo = c.TipoCuenta,
-                        saldoInicial = (int)c.SaldoInicial,
-                        estado = c.Estado,
-                        nombreCliente = c.oCliente.oPersona.Nombre
-
-                    }).ToList();
-
+                var lista = _cuentaInterface.ListarCuentas();
                 return StatusCode(StatusCodes.Status200OK, new { response = lista });
             }
             catch (Exception ex)
@@ -48,29 +38,9 @@ namespace APIBackend.Controllers
         [Route("cuenta/{idCuenta:int}")]
         public IActionResult Cuenta(int idCuenta)
         {
-            Cuenta oCuenta = _dbcontext.Cuenta.Find(idCuenta);
-
-            if (oCuenta == null)
+            try 
             {
-                //Excepcion por si no se encuentra el cliente con el id
-                return BadRequest("Cliente no encontrado!");
-            }
-
-            try
-            {
-                var cuentaPorId = _dbcontext.Cuenta.Include(c => c.oCliente)
-                    .ThenInclude(m => m.oPersona)
-                    .Where(p => p.Id == idCuenta)
-                    .Select(c => new CuentaRes
-                    {
-                        numeroCuenta = c.NumeroCuenta,
-                        tipo = c.TipoCuenta,
-                        saldoInicial = (int)c.SaldoInicial,
-                        estado = c.Estado,
-                        nombreCliente = c.oCliente.oPersona.Nombre
-
-                    }).FirstOrDefault();
-
+                var cuentaPorId = _cuentaInterface.ObtenerCuenta(idCuenta);
                 return StatusCode(StatusCodes.Status200OK, new { response = cuentaPorId });
             }
             catch (Exception ex)
@@ -83,28 +53,9 @@ namespace APIBackend.Controllers
         [Route("crearCuenta")]
         public IActionResult crearCuenta([FromBody] Cuenta objCuenta)
         {
-            Cliente oCliente = _dbcontext.Clientes.Find(objCuenta.Id);
-
-            if (oCliente == null)
-            {
-                return BadRequest("Cliente no encontrado!");
-            }
-
-            Persona oPersona = _dbcontext.Personas.Find(oCliente.ClienteId);
-
-            if (oPersona == null)
-            {
-                return BadRequest("persona no encontrada!");
-            }
-
             try
             {
-                objCuenta.oCliente = oCliente;
-                objCuenta.oCliente.oPersona = oPersona;
-
-                _dbcontext.Cuenta.Add(objCuenta);
-                _dbcontext.SaveChanges();
-
+                _cuentaInterface.GuardarCuenta(objCuenta);
                 return StatusCode(StatusCodes.Status200OK, new { mensaje = "cuenta agregada" });
             }
             catch(Exception ex)
@@ -117,24 +68,9 @@ namespace APIBackend.Controllers
         [Route("editarCuenta")]
         public IActionResult editarCuenta([FromBody] Cuenta objCuenta)
         {
-            Cuenta oCuenta = _dbcontext.Cuenta.Find(objCuenta.Id);
-
-            if (oCuenta == null)
-            {
-                //Excepcion por si no se encuentra el cliente con el id
-                return BadRequest("Cuenta no encontrada!");
-            }
-
             try
             {
-                oCuenta.TipoCuenta = objCuenta.TipoCuenta is null ? oCuenta.TipoCuenta : objCuenta.TipoCuenta;
-                oCuenta.NumeroCuenta = objCuenta.NumeroCuenta is null ? oCuenta.NumeroCuenta : objCuenta.NumeroCuenta;
-                oCuenta.SaldoInicial = objCuenta.SaldoInicial is null ? oCuenta.SaldoInicial : objCuenta.SaldoInicial;
-                oCuenta.Estado = objCuenta.Estado is null ? oCuenta.Estado : objCuenta.Estado;
-
-                _dbcontext.Cuenta.Update(oCuenta);
-                _dbcontext.SaveChanges();
-
+                _cuentaInterface.EditarCuenta(objCuenta);
                 return StatusCode(StatusCodes.Status200OK, new { mensaje = "Cuenta actualizada!" });
             }
             catch(Exception ex)
@@ -147,18 +83,9 @@ namespace APIBackend.Controllers
         [Route("eliminarCuenta/{idCuenta:int}")]
         public IActionResult eliminarCuenta(int idCuenta)
         {
-            Cuenta oCuenta = _dbcontext.Cuenta.Find(idCuenta);
-
-            if (oCuenta == null)
-            {
-                return BadRequest("Cuenta no encontrada!");
-            }
-
             try
             {
-                _dbcontext.Cuenta.Remove(oCuenta);
-                _dbcontext.SaveChanges();
-
+                _cuentaInterface.EliminarCuenta(idCuenta);
                 return StatusCode(StatusCodes.Status200OK, new { mensaje = "cuenta eliminada" });
             }
             catch (Exception ex)

@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using APIBackend.Modelos;
 using System.Text.Json.Serialization;
+using APIBackend.Services.Interfaces;
+using APIBackend.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +19,8 @@ builder.Services.AddControllers().AddJsonOptions(opt =>
 {
     opt.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
 });
+
+builder.Services.AddScoped<ClientInterface, ClientService>();
 
 var app = builder.Build();
 
