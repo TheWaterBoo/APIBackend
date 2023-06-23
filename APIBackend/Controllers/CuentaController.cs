@@ -18,8 +18,6 @@ namespace APIBackend.Controllers
         [Route("listarCuentas")]
         public IActionResult ListarCuenta()
         {
-            //List<Cuenta> lista = new List<Cuenta>();
-
             try
             {
                 var lista = _cuentaInterface.ListarCuentas();
@@ -27,7 +25,7 @@ namespace APIBackend.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status200OK, new { mensaje = ex.Message });
+                return StatusCode(StatusCodes.Status500InternalServerError, new { mensaje = ex.Message });
             }
         }
 

@@ -22,7 +22,7 @@ namespace APIBackend.Services
                     .ThenInclude(m => m.oPersona)
                     .Select(c => new CuentaRes
                     {
-                        numeroCuenta = c.NumeroCuenta,
+                        numeroCuenta = (int)c.NumeroCuenta,
                         tipo = c.TipoCuenta,
                         saldoInicial = (int)c.SaldoInicial,
                         estado = c.Estado,
@@ -45,7 +45,7 @@ namespace APIBackend.Services
             if (oCuenta == null)
             {
                 //Excepcion por si no se encuentra el cliente con el id
-                throw new ArgumentException("Cuenta no encontrada!");
+                throw new Exception("Cuenta no encontrada!");
             }
 
             try
@@ -55,7 +55,7 @@ namespace APIBackend.Services
                     .Where(p => p.Id == idCuenta)
                     .Select(c => new CuentaRes
                     {
-                        numeroCuenta = c.NumeroCuenta,
+                        numeroCuenta = (int)c.NumeroCuenta,
                         tipo = c.TipoCuenta,
                         saldoInicial = (int)c.SaldoInicial,
                         estado = c.Estado,

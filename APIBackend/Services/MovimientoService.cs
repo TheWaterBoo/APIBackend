@@ -24,7 +24,7 @@ namespace APIBackend.Services
                     {
                         Fecha = (DateTime)c.Fecha,
                         NombreCliente = c.oCuenta.oCliente.oPersona.Nombre,
-                        NumeroCuenta = c.oCuenta.NumeroCuenta,
+                        NumeroCuenta = (int)c.oCuenta.NumeroCuenta,
                         TipoCuenta = c.oCuenta.TipoCuenta,
                         SaldoInicial = (int)c.oCuenta.SaldoInicial,
                         Estado = c.oCuenta.Estado,
@@ -61,7 +61,7 @@ namespace APIBackend.Services
                     {
                         Fecha = (DateTime)c.Fecha,
                         NombreCliente = c.oCuenta.oCliente.oPersona.Nombre,
-                        NumeroCuenta = c.oCuenta.NumeroCuenta,
+                        NumeroCuenta = (int)c.oCuenta.NumeroCuenta,
                         TipoCuenta = c.oCuenta.TipoCuenta,
                         SaldoInicial = (int)c.oCuenta.SaldoInicial,
                         Estado = c.oCuenta.Estado,

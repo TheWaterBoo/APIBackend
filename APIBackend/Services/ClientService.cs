@@ -21,7 +21,7 @@ namespace APIBackend.Services
                 var lista = _dbcontext.Clientes.Include(c => c.oPersona)
                     .Select(c => new ClienteRes
                     {
-                        ID = c.ClienteId,
+                        ID = (int)c.ClienteId,
                         Nombre = c.oPersona.Nombre,
                         Direccion = c.oPersona.Direccion,
                         Telefono = c.oPersona.Telefono,
@@ -72,6 +72,8 @@ namespace APIBackend.Services
             try
             {
                 _dbcontext.Clientes.Add(objCliente);
+                objCliente.ClienteId = 0;
+                objCliente.oPersona.Id = 0;
                 _dbcontext.SaveChanges();
             }
             catch (Exception ex)
