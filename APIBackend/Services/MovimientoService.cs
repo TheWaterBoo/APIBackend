@@ -18,18 +18,19 @@ namespace APIBackend.Services
         {
             try
             {
-                var lista = _dbcontext.Movimientos.Include(c => c.oCuenta)
-                    .ThenInclude(m => m.oCliente)
+                var lista = _dbcontext.Movimientos.Include(c => c.Cuenta)
+                    .ThenInclude(m => m.Cliente)
                     .Select(c => new MovimientoRes
                     {
-                        Fecha = (DateTime)c.Fecha,
-                        NombreCliente = c.oCuenta.oCliente.oPersona.Nombre,
-                        NumeroCuenta = (int)c.oCuenta.NumeroCuenta,
-                        TipoCuenta = c.oCuenta.TipoCuenta,
-                        SaldoInicial = (int)c.oCuenta.SaldoInicial,
-                        Estado = c.oCuenta.Estado,
+                        Id = (int)c.CuentaId,
+                        Fecha = (DateTime)c.FechaMovimiento,
+                        NombreCliente = c.Cuenta.Cliente.Persona.Nombre,
+                        NumeroCuenta = c.Cuenta.NumeroCuenta,
+                        TipoCuenta = c.Cuenta.TipoCuenta,
+                        SaldoInicial = (int)c.Cuenta.SaldoInicial,
+                        Estado = c.Cuenta.Estado,
                         Movimiento = c.TipoMovimiento,
-                        SaldoDisponible = (int)c.Saldo
+                        SaldoDisponible = (int)c.SaldoDisponible
 
                     }).ToList();
 
@@ -41,7 +42,7 @@ namespace APIBackend.Services
             }
         }
 
-        public MovimientoRes ObtenerMovimiento(int idMovimiento)
+        public List<MovimientoRes> ObtenerMovimiento(int idMovimiento)
         {
             Movimiento oMovimiento = _dbcontext.Movimientos.Find(idMovimiento);
 
@@ -53,23 +54,22 @@ namespace APIBackend.Services
 
             try
             {
-                var movimientoporId = _dbcontext.Movimientos.Include(c => c.oCuenta)
-                    .ThenInclude(m => m.oCliente)
-                    .ThenInclude(cli => cli.oPersona)
-                    .Where(p => p.Id == idMovimiento)
+                var movimientoporId = _dbcontext.Movimientos.Where(p => p.CuentaId == idMovimiento)
                     .Select(c => new MovimientoRes
                     {
-                        Fecha = (DateTime)c.Fecha,
-                        NombreCliente = c.oCuenta.oCliente.oPersona.Nombre,
-                        NumeroCuenta = (int)c.oCuenta.NumeroCuenta,
-                        TipoCuenta = c.oCuenta.TipoCuenta,
-                        SaldoInicial = (int)c.oCuenta.SaldoInicial,
-                        Estado = c.oCuenta.Estado,
+                        Id = (int)c.CuentaId,
+                        Fecha = (DateTime)c.FechaMovimiento,
+                        NombreCliente = c.Cuenta.Cliente.Persona.Nombre,
+                        NumeroCuenta = c.Cuenta.NumeroCuenta,
+                        TipoCuenta = c.Cuenta.TipoCuenta,
+                        SaldoInicial = (int)c.Cuenta.SaldoInicial,
+                        Estado = c.Cuenta.Estado,
                         Movimiento = c.TipoMovimiento,
-                        SaldoDisponible = (int)c.Saldo
+                        SaldoDisponible = (int)c.SaldoDisponible
 
                     })
-                    .FirstOrDefault();
+                    .ToList();
+
                 return movimientoporId;
             }
             catch (Exception ex)
@@ -80,46 +80,46 @@ namespace APIBackend.Services
 
         public void GuardarMovimiento(Movimiento objMovimiento)
         {
-            try
+            /*try
             {
-                Cuenta oCuenta = _dbcontext.Cuenta.Find(objMovimiento.Id);
+                Cuenta oCuenta = _dbcontext.Cuentas.Find(objMovimiento.CuentaId);
 
                 if (oCuenta == null)
                 {
                     throw new Exception("No se encontro la cuenta");
                 }
 
-                Cliente oCliente = _dbcontext.Clientes.Find(oCuenta.Id);
+                Cliente oCliente = _dbcontext.Clientes.Find(oCuenta.ClienteId);
 
                 if (oCliente == null)
                 {
                     throw new Exception("No se encontro el cliente");
                 }
 
-                Persona oPersona = _dbcontext.Personas.Find(oCliente.ClienteId);
+                Persona oPersona = _dbcontext.Personas.Find(oCliente.PersonaId);
 
                 if (oPersona == null)
                 {
                     throw new Exception("No se encontro la persona proporcionada");
                 }
 
-                objMovimiento.oCuenta = oCuenta;
-                objMovimiento.oCuenta.oCliente = oCliente;
-                objMovimiento.oCuenta.oCliente.oPersona = oPersona;
+                objMovimiento.Cuenta = oCuenta;
+                objMovimiento.Cuenta.Cliente = oCliente;
+                objMovimiento.Cuenta.Cliente.Persona = oPersona;
 
                 int saldoInicial = (int)oCuenta.SaldoInicial;
-                int valorMovimiento = (int)objMovimiento.Valor;
+                int valorMovimiento = (int)objMovimiento.ValorMovimiento;
 
                 string[] cadena = objMovimiento.TipoMovimiento.Split(' ');
                 string tipoMovimiento = cadena[0].ToLower();
 
                 if (tipoMovimiento == "retiro")
                 {
-                    objMovimiento.Saldo = saldoInicial - valorMovimiento;
+                    objMovimiento.SaldoDisponible = saldoInicial - valorMovimiento;
                 }
                 else if (tipoMovimiento == "deposito")
                 {
-                    objMovimiento.Saldo = saldoInicial + valorMovimiento;
+                    objMovimiento.SaldoDisponible = saldoInicial + valorMovimiento;
                 }
                 else
                 {
@@ -132,12 +132,20 @@ namespace APIBackend.Services
             catch (Exception ex)
             {
                 throw new Exception("Ocurrio un error al crear el movimiento\n",ex);
+            }*/
+
+            if (objMovimiento == null)
+            {
+                throw new ArgumentNullException(nameof(objMovimiento));
             }
+
+            _dbcontext.Movimientos.Add(objMovimiento);
+            _dbcontext.SaveChanges();
         }
 
         public void EditarMovimiento(Movimiento objMovimiento)
         {
-            Movimiento oMovimiento = _dbcontext.Movimientos.Find(objMovimiento.Id);
+            /*Movimiento oMovimiento = _dbcontext.Movimientos.Find(objMovimiento.MovimientoId);
 
             if (oMovimiento == null)
             {
@@ -147,18 +155,31 @@ namespace APIBackend.Services
             try
             {
                 oMovimiento.TipoMovimiento = objMovimiento.TipoMovimiento is null ? oMovimiento.TipoMovimiento : objMovimiento.TipoMovimiento;
-                oMovimiento.Fecha = objMovimiento.Fecha is null ? oMovimiento.Fecha : objMovimiento.Fecha;
-                oMovimiento.Saldo = objMovimiento.Saldo is null ? oMovimiento.Saldo : objMovimiento.Saldo;
+                oMovimiento.FechaMovimiento = objMovimiento.FechaMovimiento is null ? oMovimiento.FechaMovimiento : objMovimiento.FechaMovimiento;
+                oMovimiento.SaldoDisponible = objMovimiento.SaldoDisponible is null ? oMovimiento.SaldoDisponible : objMovimiento.SaldoDisponible;
             }
             catch (Exception ex)
             {
                 throw new Exception("Ocurrio un error al editar el movimiento", ex);
+            }*/
+
+            var movimientoExistente = _dbcontext.Movimientos.FirstOrDefault(m => m.MovimientoId == objMovimiento.MovimientoId);
+            if (movimientoExistente == null)
+            {
+                throw new ArgumentException($"No se encontró el movimiento con el ID: {objMovimiento.MovimientoId}");
             }
+
+            // Actualizar los campos necesarios del movimiento existente con los valores del movimiento actualizado
+            movimientoExistente.TipoMovimiento = objMovimiento.TipoMovimiento;
+            movimientoExistente.ValorMovimiento = objMovimiento.ValorMovimiento;
+            movimientoExistente.SaldoDisponible = objMovimiento.SaldoDisponible;
+
+            _dbcontext.SaveChanges();
         }
 
         public void EliminarMovimiento(int idMovimiento)
         {
-            Movimiento oMovimiento = _dbcontext.Movimientos.Find(idMovimiento);
+            /*Movimiento oMovimiento = _dbcontext.Movimientos.Find(idMovimiento);
 
             if (oMovimiento == null)
             {
@@ -173,7 +194,16 @@ namespace APIBackend.Services
             catch (Exception ex)
             {
                 throw new Exception("Ocurrio un error al eliminar un movimiento", ex);
+            }*/
+
+            var movimientoExistente = _dbcontext.Movimientos.FirstOrDefault(m => m.MovimientoId == idMovimiento);
+            if (movimientoExistente == null)
+            {
+                throw new ArgumentException($"No se encontró el movimiento con el ID: {idMovimiento}");
             }
+
+            _dbcontext.Movimientos.Remove(movimientoExistente);
+            _dbcontext.SaveChanges();
         }
     }
 }

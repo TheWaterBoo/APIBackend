@@ -2,6 +2,7 @@
 using APIBackend.Modelos;
 using APIBackend.Modelos.Responses;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc;
 
 namespace APIBackend.Services
 {
@@ -18,18 +19,19 @@ namespace APIBackend.Services
         {
             try
             {
-                var lista = _dbcontext.Clientes.Include(c => c.oPersona)
+                var lista = _dbcontext.Clientes.Include(c => c.Persona)
                     .Select(c => new ClienteRes
                     {
-                        ID = (int)c.ClienteId,
-                        Nombre = c.oPersona.Nombre,
-                        Direccion = c.oPersona.Direccion,
-                        Telefono = c.oPersona.Telefono,
-                        Genero = c.oPersona.Genero,
+                        ID = (int)c.PersonaId,
+                        Nombre = c.Persona.Nombre,
+                        Direccion = c.Persona.Direccion,
+                        Telefono = c.Persona.Telefono,
+                        Genero = c.Persona.Genero,
                         Estado = c.Estado
                     }).ToList();
 
                 return lista;
+
             }
             catch (Exception ex)
             {
@@ -48,19 +50,32 @@ namespace APIBackend.Services
 
             try
             {
-                var clientePorId = _dbcontext.Clientes.Include(c => c.oPersona)
+                var clientePorId = _dbcontext.Clientes.Include(c => c.Persona)
                     .Where(p => p.ClienteId == idCliente)
                     .Select(c => new ClienteRes
                     {
-                        Nombre = c.oPersona.Nombre,
-                        Direccion = c.oPersona.Direccion,
-                        Telefono = c.oPersona.Telefono,
-                        Genero = c.oPersona.Genero,
+                        ID = (int)c.PersonaId,
+                        Nombre = c.Persona.Nombre,
+                        Direccion = c.Persona.Direccion,
+                        Telefono = c.Persona.Telefono,
+                        Genero = c.Persona.Genero,
                         Estado = c.Estado
                     }).FirstOrDefault();
 
                 return clientePorId;
-            }
+
+                /*var cliente = _dbcontext.Clientes.FirstOrDefault(c => c.ClienteId == idCliente);
+                if (cliente != null)
+                {
+                    cliente.Persona = _dbcontext.Personas.FirstOrDefault(p => p.PersonaId == cliente.PersonaId);
+                }
+                else
+                {
+                    throw new Exception("No se encontro ningun cliente con ese id");
+                }
+
+                return cliente;*/
+            }   
             catch (Exception ex)
             {
                 throw new Exception("Error al obtener el cliente por ID", ex);
@@ -71,9 +86,12 @@ namespace APIBackend.Services
         {
             try
             {
+                if (objCliente == null)
+                {
+                    throw new ArgumentNullException(nameof(objCliente));
+                }
+
                 _dbcontext.Clientes.Add(objCliente);
-                objCliente.ClienteId = 0;
-                objCliente.oPersona.Id = 0;
                 _dbcontext.SaveChanges();
             }
             catch (Exception ex)
@@ -84,16 +102,16 @@ namespace APIBackend.Services
 
         public void EditarCliente(Cliente objCliente)
         {
-            Cliente oCliente = _dbcontext.Clientes.Find(objCliente.ClienteId);
+            /*Cliente oCliente = _dbcontext.Clientes.Find(objCliente.ClienteId);
 
             if (oCliente == null)
             {
                 throw new ArgumentException("Cliente no encontrado");
-            }
+            }*/
 
-            try
+            /*try
             {
-                oCliente.Contraseña = objCliente.Contraseña ?? oCliente.Contraseña;
+                oCliente.Contrasena = objCliente.Contrasena ?? oCliente.Contrasena;
                 oCliente.Estado = objCliente.Estado ?? oCliente.Estado;
 
                 _dbcontext.Clientes.Update(oCliente);
@@ -102,12 +120,30 @@ namespace APIBackend.Services
             catch (Exception ex)
             {
                 throw new Exception("Error al editar el cliente", ex);
+            }*/
+
+            if (objCliente == null)
+            {
+                throw new ArgumentNullException(nameof(objCliente));
+            }
+
+            var clienteExistente = _dbcontext.Clientes.FirstOrDefault(c => c.ClienteId == objCliente.ClienteId);
+            if (clienteExistente != null)
+            {
+                clienteExistente.Persona.Nombre = objCliente.Persona.Nombre;
+                // Actualiza otras propiedades del cliente según sea necesario
+
+                _dbcontext.SaveChanges();
+            }
+            else
+            {
+                throw new ArgumentException($"No se encontró el cliente con el ID: {objCliente.ClienteId}");
             }
         }
 
         public void EliminarCliente(int idCliente)
         {
-            Cliente oCliente = _dbcontext.Clientes.Find(idCliente);
+            /*Cliente oCliente = _dbcontext.Clientes.Find(idCliente);
             Persona oPersona = _dbcontext.Personas.Find(idCliente);
 
             if (oCliente == null || oPersona == null)
@@ -124,6 +160,17 @@ namespace APIBackend.Services
             catch (Exception ex)
             {
                 throw new Exception("Error al eliminar el cliente", ex);
+            }*/
+
+            var clienteExistente = _dbcontext.Clientes.FirstOrDefault(c => c.ClienteId == idCliente);
+            if (clienteExistente != null)
+            {
+                _dbcontext.Clientes.Remove(clienteExistente);
+                _dbcontext.SaveChanges();
+            }
+            else
+            {
+                throw new ArgumentException($"No se encontró el cliente con el ID: {idCliente}");
             }
         }
     }

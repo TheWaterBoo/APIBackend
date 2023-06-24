@@ -13,6 +13,7 @@ namespace APIBackend.Controllers
     public class ClienteController : ControllerBase
     {
         private readonly ClientInterface _clientService;
+
         public ClienteController(ClientInterface _service)
         {
             _clientService = _service;

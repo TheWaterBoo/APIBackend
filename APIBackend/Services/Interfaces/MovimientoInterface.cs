@@ -6,7 +6,7 @@ namespace APIBackend.Services.Interfaces
     public interface MovimientoInterface
     {
         List<MovimientoRes> ListarMovimientos();
-        MovimientoRes ObtenerMovimiento(int idMovimiento);
+        List<MovimientoRes> ObtenerMovimiento(int idMovimiento);
         void GuardarMovimiento(Movimiento objMovimiento);
         void EditarMovimiento(Movimiento objMovimiento);
         void EliminarMovimiento(int idMovimiento);

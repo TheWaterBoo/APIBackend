@@ -6,7 +6,7 @@ namespace APIBackend.Services.Interfaces
     public interface CuentaInterface
     {
         List<CuentaRes> ListarCuentas();
-        CuentaRes ObtenerCuenta(int idCuenta);
+        List<CuentaRes> ObtenerCuenta(int idCuenta);
         void GuardarCuenta(Cuenta objCuenta);
         void EditarCuenta(Cuenta objCuenta);
         void EliminarCuenta(int idCuenta);

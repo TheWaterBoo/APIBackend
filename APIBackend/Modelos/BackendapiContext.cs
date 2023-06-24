@@ -17,13 +17,14 @@ public partial class BackendapiContext : DbContext
 
     public virtual DbSet<Cliente> Clientes { get; set; }
 
-    public virtual DbSet<Cuenta> Cuenta { get; set; }
+    public virtual DbSet<Cuenta> Cuentas { get; set; }
 
     public virtual DbSet<Movimiento> Movimientos { get; set; }
 
     public virtual DbSet<Persona> Personas { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
 
     }
 
@@ -31,104 +32,104 @@ public partial class BackendapiContext : DbContext
     {
         modelBuilder.Entity<Cliente>(entity =>
         {
-            entity.HasKey(e => e.ClienteId).HasName("PK__cliente__C2FF24BD71714540");
+            entity.HasKey(e => e.ClienteId).HasName("PK__clientes__47E34D649227631C");
 
-            entity.ToTable("cliente");
+            entity.ToTable("clientes");
 
-            entity.Property(e => e.ClienteId).HasColumnName("clienteID");
-            entity.Property(e => e.Contraseña)
+            entity.Property(e => e.ClienteId).HasColumnName("cliente_id");
+            entity.Property(e => e.Contrasena)
                 .HasMaxLength(50)
                 .IsUnicode(false)
-                .HasColumnName("contraseña");
+                .HasColumnName("contrasena");
             entity.Property(e => e.Estado)
-                .HasMaxLength(6)
+                .HasMaxLength(20)
                 .IsUnicode(false)
                 .HasColumnName("estado");
-            entity.Property(e => e.PersonaId).HasColumnName("personaId");
+            entity.Property(e => e.PersonaId).HasColumnName("persona_id");
 
-            entity.HasOne(d => d.oPersona).WithOne(p => p.Cliente)
-                .HasForeignKey<Cliente>(d => d.ClienteId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__cliente__cliente__398D8EEE");
+            entity.HasOne(d => d.Persona).WithMany(p => p.Clientes)
+                .HasForeignKey(d => d.PersonaId)
+                .HasConstraintName("FK__clientes__person__440B1D61");
         });
 
         modelBuilder.Entity<Cuenta>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__cuenta__3213E83F0C6ABBAF");
+            entity.HasKey(e => e.CuentaId).HasName("PK__cuentas__612B08612A9CE06C");
 
-            entity.ToTable("cuenta");
+            entity.ToTable("cuentas");
 
-            entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.ClienteId).HasColumnName("clienteId");
+            entity.Property(e => e.CuentaId).HasColumnName("cuenta_id");
+            entity.Property(e => e.ClienteId).HasColumnName("cliente_id");
             entity.Property(e => e.Estado)
-                .HasMaxLength(30)
+                .HasMaxLength(20)
                 .IsUnicode(false)
                 .HasColumnName("estado");
-            entity.Property(e => e.NumeroCuenta).HasColumnName("numeroCuenta");
-            entity.Property(e => e.SaldoInicial)
-                .HasColumnType("decimal(18, 2)")
-                .HasColumnName("saldoInicial");
-            entity.Property(e => e.TipoCuenta)
-                .HasMaxLength(30)
+            entity.Property(e => e.NumeroCuenta)
+                .HasMaxLength(20)
                 .IsUnicode(false)
-                .HasColumnName("tipoCuenta");
+                .HasColumnName("numero_cuenta");
+            entity.Property(e => e.SaldoInicial)
+                .HasColumnType("decimal(10, 2)")
+                .HasColumnName("saldo_inicial");
+            entity.Property(e => e.TipoCuenta)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("tipo_cuenta");
 
-            entity.HasOne(d => d.oCliente).WithOne(p => p.Cuenta)
-                .HasForeignKey<Cuenta>(d => d.Id)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__cuenta__id__3C69FB99");
+            entity.HasOne(d => d.Cliente).WithMany(p => p.Cuenta)
+                .HasForeignKey(d => d.ClienteId)
+                .HasConstraintName("FK__cuentas__cliente__46E78A0C");
         });
 
         modelBuilder.Entity<Movimiento>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__movimien__3213E83F1AAF15B8");
+            entity.HasKey(e => e.MovimientoId).HasName("PK__movimien__A87EF0E52BE97771");
 
             entity.ToTable("movimientos");
 
-            entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.CuentaId).HasColumnName("cuentaId");
-            entity.Property(e => e.Fecha)
-                .HasColumnType("date")
-                .HasColumnName("fecha");
-            entity.Property(e => e.Saldo)
-                .HasColumnType("decimal(18, 2)")
-                .HasColumnName("saldo");
+            entity.Property(e => e.MovimientoId).HasColumnName("movimiento_id");
+            entity.Property(e => e.CuentaId).HasColumnName("cuenta_id");
+            entity.Property(e => e.FechaMovimiento)
+                .HasColumnType("datetime")
+                .HasColumnName("fecha_movimiento");
+            entity.Property(e => e.SaldoDisponible)
+                .HasColumnType("decimal(10, 2)")
+                .HasColumnName("saldo_disponible");
             entity.Property(e => e.TipoMovimiento)
-                .HasMaxLength(100)
+                .HasMaxLength(50)
                 .IsUnicode(false)
-                .HasColumnName("tipoMovimiento");
-            entity.Property(e => e.Valor)
-                .HasColumnType("decimal(18, 2)")
-                .HasColumnName("valor");
+                .HasColumnName("tipo_movimiento");
+            entity.Property(e => e.ValorMovimiento)
+                .HasColumnType("decimal(10, 2)")
+                .HasColumnName("valor_movimiento");
 
-            entity.HasOne(d => d.oCuenta).WithOne(p => p.Movimiento)
-                .HasForeignKey<Movimiento>(d => d.Id)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__movimientos__id__3F466844");
+            entity.HasOne(d => d.Cuenta).WithMany(p => p.Movimientos)
+                .HasForeignKey(d => d.CuentaId)
+                .HasConstraintName("FK__movimient__cuent__49C3F6B7");
         });
 
         modelBuilder.Entity<Persona>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__persona__3213E83FD122E34C");
+            entity.HasKey(e => e.PersonaId).HasName("PK__persona__189F813A49F16470");
 
             entity.ToTable("persona");
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.PersonaId).HasColumnName("persona_id");
             entity.Property(e => e.Direccion)
-                .HasMaxLength(70)
+                .HasMaxLength(100)
                 .IsUnicode(false)
                 .HasColumnName("direccion");
-            entity.Property(e => e.Edad).HasColumnName("edad");
             entity.Property(e => e.Genero)
-                .HasMaxLength(20)
+                .HasMaxLength(1)
                 .IsUnicode(false)
+                .IsFixedLength()
                 .HasColumnName("genero");
             entity.Property(e => e.Nombre)
-                .HasMaxLength(20)
+                .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("nombre");
             entity.Property(e => e.Telefono)
-                .HasMaxLength(12)
+                .HasMaxLength(20)
                 .IsUnicode(false)
                 .HasColumnName("telefono");
         });

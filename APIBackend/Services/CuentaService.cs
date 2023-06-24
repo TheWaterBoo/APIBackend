@@ -18,17 +18,22 @@ namespace APIBackend.Services
         {
             try
             {
-                var lista = _dbcontext.Cuenta.Include(c => c.oCliente)
-                    .ThenInclude(m => m.oPersona)
+                var lista = _dbcontext.Cuentas.Include(c => c.Cliente)
+                    .ThenInclude(m => m.Persona)
                     .Select(c => new CuentaRes
                     {
-                        numeroCuenta = (int)c.NumeroCuenta,
+                        clienteId = (int)c.ClienteId,
+                        numeroCuenta = c.NumeroCuenta,
                         tipo = c.TipoCuenta,
                         saldoInicial = (int)c.SaldoInicial,
                         estado = c.Estado,
-                        nombreCliente = c.oCliente.oPersona.Nombre
-
+                        nombreCliente = c.Cliente.Persona.Nombre
                     }).ToList();
+
+                if (lista.Count == 0)
+                {
+                    throw new Exception("No existen cuentas para mostrar!");
+                }
 
                 return lista;
             }
@@ -38,30 +43,36 @@ namespace APIBackend.Services
             }
         }
 
-        public CuentaRes ObtenerCuenta(int idCuenta)
+        public List<CuentaRes> ObtenerCuenta(int idCuenta)
         {
-            Cuenta oCuenta = _dbcontext.Cuenta.Find(idCuenta);
+            Cuenta oCuenta = _dbcontext.Cuentas.Find(idCuenta);
 
             if (oCuenta == null)
             {
                 //Excepcion por si no se encuentra el cliente con el id
-                throw new Exception("Cuenta no encontrada!");
+                throw new Exception("Cuenta/s no encontrada!");
             }
 
             try
             {
-                var cuentaPorId = _dbcontext.Cuenta.Include(c => c.oCliente)
-                    .ThenInclude(m => m.oPersona)
-                    .Where(p => p.Id == idCuenta)
+                var cuentaPorId = _dbcontext.Cuentas.Include(c => c.Cliente)
+                    .ThenInclude(m => m.Persona)
+                    .Where(p => p.ClienteId == idCuenta)
                     .Select(c => new CuentaRes
                     {
-                        numeroCuenta = (int)c.NumeroCuenta,
+                        clienteId = (int)c.ClienteId,
+                        numeroCuenta = c.NumeroCuenta,
                         tipo = c.TipoCuenta,
                         saldoInicial = (int)c.SaldoInicial,
                         estado = c.Estado,
-                        nombreCliente = c.oCliente.oPersona.Nombre
+                        nombreCliente = c.Cliente.Persona.Nombre
 
-                    }).FirstOrDefault();
+                    }).ToList();
+
+                if (cuentaPorId.Count == 0)
+                {
+                    throw new Exception("No se encontro ninguna cuenta con el id de cliente");
+                }
 
                 return cuentaPorId;
             }
@@ -73,36 +84,44 @@ namespace APIBackend.Services
 
         public void GuardarCuenta(Cuenta objCuenta)
         {
-            Cliente oCliente = _dbcontext.Clientes.Find(objCuenta.Id);
+            /*Cliente oCliente = _dbcontext.Clientes.Find(objCuenta.CuentaId);
 
             if (oCliente == null)
             {
                 throw new Exception("Cliente no encontrado!");
             }
 
-            Persona oPersona = _dbcontext.Personas.Find(oCliente.ClienteId);
+            Persona oPersona = _dbcontext.Personas.Find(oCliente.ClienteId);*/
 
-            if (oPersona == null)
+            /*if (oPersona == null)
             {
                 throw new Exception("persona no encontrada!");
             }
 
             try
             {
-                objCuenta.oCliente = oCliente;
-                objCuenta.oCliente.oPersona = oPersona;
+                objCuenta.Cliente = oCliente;
+                objCuenta.Cliente.Persona = oPersona;
 
-                _dbcontext.Cuenta.Add(objCuenta);
+                _dbcontext.Cuentas.Add(objCuenta);
                 _dbcontext.SaveChanges();
             }
             catch (Exception ex) {
                 throw new Exception("No se pudo guardar la cuenta");
+            }*/
+
+            if (objCuenta == null)
+            {
+                throw new ArgumentNullException(nameof(objCuenta));
             }
+
+            _dbcontext.Cuentas.Add(objCuenta);
+            _dbcontext.SaveChanges();
         }
 
         public void EditarCuenta(Cuenta objCuenta)
         {
-            Cuenta oCuenta = _dbcontext.Cuenta.Find(objCuenta.Id);
+            /*Cuenta oCuenta = _dbcontext.Cuentas.Find(objCuenta.CuentaId);
 
             if (oCuenta == null)
             {
@@ -117,18 +136,38 @@ namespace APIBackend.Services
                 oCuenta.SaldoInicial = objCuenta.SaldoInicial is null ? oCuenta.SaldoInicial : objCuenta.SaldoInicial;
                 oCuenta.Estado = objCuenta.Estado is null ? oCuenta.Estado : objCuenta.Estado;
 
-                _dbcontext.Cuenta.Update(oCuenta);
+                _dbcontext.Cuentas.Update(oCuenta);
                 _dbcontext.SaveChanges();
             }
             catch (Exception ex)
             {
                 throw new Exception("Error al editar la cuenta ", ex);
+            }*/
+
+            if (objCuenta == null)
+            {
+                throw new ArgumentNullException(nameof(objCuenta));
+            }
+
+            var cuentaExistente = _dbcontext.Cuentas.FirstOrDefault(c => c.CuentaId == objCuenta.CuentaId);
+            if (cuentaExistente != null)
+            {
+                cuentaExistente.TipoCuenta = objCuenta.TipoCuenta;
+                cuentaExistente.SaldoInicial = objCuenta.SaldoInicial;
+                cuentaExistente.Estado = objCuenta.Estado;
+                // Actualiza otras propiedades de la cuenta según sea necesario
+
+                _dbcontext.SaveChanges();
+            }
+            else
+            {
+                throw new ArgumentException($"No se encontró la cuenta con el ID: {objCuenta.CuentaId}");
             }
         }
 
         public void EliminarCuenta(int idCuenta)
         {
-            Cuenta oCuenta = _dbcontext.Cuenta.Find(idCuenta);
+            /*Cuenta oCuenta = _dbcontext.Cuentas.Find(idCuenta);
 
             if (oCuenta == null)
             {
@@ -137,12 +176,23 @@ namespace APIBackend.Services
 
             try
             {
-                _dbcontext.Cuenta.Remove(oCuenta);
+                _dbcontext.Cuentas.Remove(oCuenta);
                 _dbcontext.SaveChanges();
             }
             catch (Exception ex)
             {
                 throw new Exception("Error al eliminar la cuenta ", ex);
+            }*/
+
+            var cuentaExistente = _dbcontext.Cuentas.FirstOrDefault(c => c.CuentaId == idCuenta);
+            if (cuentaExistente != null)
+            {
+                _dbcontext.Cuentas.Remove(cuentaExistente);
+                _dbcontext.SaveChanges();
+            }
+            else
+            {
+                throw new ArgumentException($"No se encontró la cuenta con el ID: {idCuenta}");
             }
         }
     }
