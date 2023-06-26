@@ -11,7 +11,7 @@ public partial class Cuenta
 
     public int? ClienteId { get; set; }
 
-    public string? NumeroCuenta { get; set; }
+    public int? NumeroCuenta { get; set; }
 
     public string? TipoCuenta { get; set; }
 

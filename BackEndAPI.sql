@@ -24,7 +24,7 @@ GO
 CREATE TABLE cuentas (
     cuenta_id INT IDENTITY(1,1) PRIMARY KEY,
     cliente_id INT FOREIGN KEY REFERENCES clientes(cliente_id),
-    numero_cuenta VARCHAR(20),
+    numero_cuenta INT,
     tipo_cuenta VARCHAR(50),
     saldo_inicial DECIMAL(10, 2),
     estado VARCHAR(20)
@@ -57,10 +57,10 @@ VALUES (1, '123456', 'Activo'),
 GO
 
 INSERT INTO cuentas (cliente_id, numero_cuenta, tipo_cuenta, saldo_inicial, estado)
-VALUES (1, '123456789', 'Ahorros', 5000.00, 'Activa'),
-       (1, '987654321', 'Corriente', 10000.00, 'Activa'),
-       (2, '654321987', 'Ahorros', 7500.00, 'Inactiva'),
-       (3, '456789123', 'Corriente', 12000.00, 'Activa');
+VALUES (1, 123456789, 'Ahorros', 5000.00, 'Activa'),
+       (1, 987654321, 'Corriente', 10000.00, 'Activa'),
+       (2, 654321987, 'Ahorros', 7500.00, 'Inactiva'),
+       (3, 456789123, 'Corriente', 12000.00, 'Activa');
 GO
 
 INSERT INTO movimientos (cuenta_id, fecha_movimiento, tipo_movimiento, valor_movimiento, saldo_disponible)

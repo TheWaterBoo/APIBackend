@@ -23,7 +23,7 @@ namespace APIBackend.Services
                     .Select(c => new CuentaRes
                     {
                         clienteId = (int)c.ClienteId,
-                        numeroCuenta = c.NumeroCuenta,
+                        numeroCuenta = (int)c.NumeroCuenta,
                         tipo = c.TipoCuenta,
                         saldoInicial = (int)c.SaldoInicial,
                         estado = c.Estado,
@@ -61,7 +61,7 @@ namespace APIBackend.Services
                     .Select(c => new CuentaRes
                     {
                         clienteId = (int)c.ClienteId,
-                        numeroCuenta = c.NumeroCuenta,
+                        numeroCuenta = (int)c.NumeroCuenta,
                         tipo = c.TipoCuenta,
                         saldoInicial = (int)c.SaldoInicial,
                         estado = c.Estado,
@@ -84,32 +84,6 @@ namespace APIBackend.Services
 
         public void GuardarCuenta(Cuenta objCuenta)
         {
-            /*Cliente oCliente = _dbcontext.Clientes.Find(objCuenta.CuentaId);
-
-            if (oCliente == null)
-            {
-                throw new Exception("Cliente no encontrado!");
-            }
-
-            Persona oPersona = _dbcontext.Personas.Find(oCliente.ClienteId);*/
-
-            /*if (oPersona == null)
-            {
-                throw new Exception("persona no encontrada!");
-            }
-
-            try
-            {
-                objCuenta.Cliente = oCliente;
-                objCuenta.Cliente.Persona = oPersona;
-
-                _dbcontext.Cuentas.Add(objCuenta);
-                _dbcontext.SaveChanges();
-            }
-            catch (Exception ex) {
-                throw new Exception("No se pudo guardar la cuenta");
-            }*/
-
             if (objCuenta == null)
             {
                 throw new ArgumentNullException(nameof(objCuenta));
@@ -121,29 +95,6 @@ namespace APIBackend.Services
 
         public void EditarCuenta(Cuenta objCuenta)
         {
-            /*Cuenta oCuenta = _dbcontext.Cuentas.Find(objCuenta.CuentaId);
-
-            if (oCuenta == null)
-            {
-                //Excepcion por si no se encuentra el cliente con el id
-                throw new Exception("Cuenta no encontrada!");
-            }
-
-            try
-            {
-                oCuenta.TipoCuenta = objCuenta.TipoCuenta is null ? oCuenta.TipoCuenta : objCuenta.TipoCuenta;
-                oCuenta.NumeroCuenta = objCuenta.NumeroCuenta is null ? oCuenta.NumeroCuenta : objCuenta.NumeroCuenta;
-                oCuenta.SaldoInicial = objCuenta.SaldoInicial is null ? oCuenta.SaldoInicial : objCuenta.SaldoInicial;
-                oCuenta.Estado = objCuenta.Estado is null ? oCuenta.Estado : objCuenta.Estado;
-
-                _dbcontext.Cuentas.Update(oCuenta);
-                _dbcontext.SaveChanges();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Error al editar la cuenta ", ex);
-            }*/
-
             if (objCuenta == null)
             {
                 throw new ArgumentNullException(nameof(objCuenta));
@@ -167,23 +118,6 @@ namespace APIBackend.Services
 
         public void EliminarCuenta(int idCuenta)
         {
-            /*Cuenta oCuenta = _dbcontext.Cuentas.Find(idCuenta);
-
-            if (oCuenta == null)
-            {
-                throw new Exception("Cuenta no encontrada!");
-            }
-
-            try
-            {
-                _dbcontext.Cuentas.Remove(oCuenta);
-                _dbcontext.SaveChanges();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Error al eliminar la cuenta ", ex);
-            }*/
-
             var cuentaExistente = _dbcontext.Cuentas.FirstOrDefault(c => c.CuentaId == idCuenta);
             if (cuentaExistente != null)
             {

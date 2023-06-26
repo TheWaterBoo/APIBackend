@@ -25,14 +25,20 @@ namespace APIBackend.Services
                         Id = (int)c.CuentaId,
                         Fecha = (DateTime)c.FechaMovimiento,
                         NombreCliente = c.Cuenta.Cliente.Persona.Nombre,
-                        NumeroCuenta = c.Cuenta.NumeroCuenta,
+                        NumeroCuenta = (int)c.Cuenta.NumeroCuenta,
                         TipoCuenta = c.Cuenta.TipoCuenta,
                         SaldoInicial = (int)c.Cuenta.SaldoInicial,
                         Estado = c.Cuenta.Estado,
                         Movimiento = c.TipoMovimiento,
+                        ValorMovimiento = (int)c.ValorMovimiento,
                         SaldoDisponible = (int)c.SaldoDisponible
 
                     }).ToList();
+
+                if (lista.Count == 0)
+                {
+                    throw new Exception("Por el momento no hay movimientos realizados");
+                }
 
                 return lista;
             }
@@ -60,11 +66,12 @@ namespace APIBackend.Services
                         Id = (int)c.CuentaId,
                         Fecha = (DateTime)c.FechaMovimiento,
                         NombreCliente = c.Cuenta.Cliente.Persona.Nombre,
-                        NumeroCuenta = c.Cuenta.NumeroCuenta,
+                        NumeroCuenta = (int)c.Cuenta.NumeroCuenta,
                         TipoCuenta = c.Cuenta.TipoCuenta,
                         SaldoInicial = (int)c.Cuenta.SaldoInicial,
                         Estado = c.Cuenta.Estado,
                         Movimiento = c.TipoMovimiento,
+                        ValorMovimiento = (int)c.ValorMovimiento,
                         SaldoDisponible = (int)c.SaldoDisponible
 
                     })
@@ -80,60 +87,6 @@ namespace APIBackend.Services
 
         public void GuardarMovimiento(Movimiento objMovimiento)
         {
-            /*try
-            {
-                Cuenta oCuenta = _dbcontext.Cuentas.Find(objMovimiento.CuentaId);
-
-                if (oCuenta == null)
-                {
-                    throw new Exception("No se encontro la cuenta");
-                }
-
-                Cliente oCliente = _dbcontext.Clientes.Find(oCuenta.ClienteId);
-
-                if (oCliente == null)
-                {
-                    throw new Exception("No se encontro el cliente");
-                }
-
-                Persona oPersona = _dbcontext.Personas.Find(oCliente.PersonaId);
-
-                if (oPersona == null)
-                {
-                    throw new Exception("No se encontro la persona proporcionada");
-                }
-
-                objMovimiento.Cuenta = oCuenta;
-                objMovimiento.Cuenta.Cliente = oCliente;
-                objMovimiento.Cuenta.Cliente.Persona = oPersona;
-
-                int saldoInicial = (int)oCuenta.SaldoInicial;
-                int valorMovimiento = (int)objMovimiento.ValorMovimiento;
-
-                string[] cadena = objMovimiento.TipoMovimiento.Split(' ');
-                string tipoMovimiento = cadena[0].ToLower();
-
-                if (tipoMovimiento == "retiro")
-                {
-                    objMovimiento.SaldoDisponible = saldoInicial - valorMovimiento;
-                }
-                else if (tipoMovimiento == "deposito")
-                {
-                    objMovimiento.SaldoDisponible = saldoInicial + valorMovimiento;
-                }
-                else
-                {
-                    throw new Exception("El movimiento que deseas realizar no esta disponible");
-                }
-
-                _dbcontext.Movimientos.Add(objMovimiento);
-                _dbcontext.SaveChanges();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Ocurrio un error al crear el movimiento\n",ex);
-            }*/
-
             if (objMovimiento == null)
             {
                 throw new ArgumentNullException(nameof(objMovimiento));
@@ -145,24 +98,6 @@ namespace APIBackend.Services
 
         public void EditarMovimiento(Movimiento objMovimiento)
         {
-            /*Movimiento oMovimiento = _dbcontext.Movimientos.Find(objMovimiento.MovimientoId);
-
-            if (oMovimiento == null)
-            {
-                throw new Exception("Movimiento no encontrado");
-            }
-
-            try
-            {
-                oMovimiento.TipoMovimiento = objMovimiento.TipoMovimiento is null ? oMovimiento.TipoMovimiento : objMovimiento.TipoMovimiento;
-                oMovimiento.FechaMovimiento = objMovimiento.FechaMovimiento is null ? oMovimiento.FechaMovimiento : objMovimiento.FechaMovimiento;
-                oMovimiento.SaldoDisponible = objMovimiento.SaldoDisponible is null ? oMovimiento.SaldoDisponible : objMovimiento.SaldoDisponible;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Ocurrio un error al editar el movimiento", ex);
-            }*/
-
             var movimientoExistente = _dbcontext.Movimientos.FirstOrDefault(m => m.MovimientoId == objMovimiento.MovimientoId);
             if (movimientoExistente == null)
             {
@@ -179,23 +114,6 @@ namespace APIBackend.Services
 
         public void EliminarMovimiento(int idMovimiento)
         {
-            /*Movimiento oMovimiento = _dbcontext.Movimientos.Find(idMovimiento);
-
-            if (oMovimiento == null)
-            {
-                throw new Exception("Movimiento no encontrado");
-            }
-
-            try
-            {
-                _dbcontext.Movimientos.Remove(oMovimiento);
-                _dbcontext.SaveChanges();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Ocurrio un error al eliminar un movimiento", ex);
-            }*/
-
             var movimientoExistente = _dbcontext.Movimientos.FirstOrDefault(m => m.MovimientoId == idMovimiento);
             if (movimientoExistente == null)
             {

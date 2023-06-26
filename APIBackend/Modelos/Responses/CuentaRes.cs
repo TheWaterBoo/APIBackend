@@ -3,7 +3,7 @@
     public class CuentaRes
     {
         public int clienteId { get; set; }
-        public string numeroCuenta { get; set; }
+        public int numeroCuenta { get; set; }
         public string tipo { get; set; }
         public int saldoInicial { get; set; }
         public string estado { get; set; }

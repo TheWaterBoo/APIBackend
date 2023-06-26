@@ -30,6 +30,11 @@ namespace APIBackend.Services
                         Estado = c.Estado
                     }).ToList();
 
+                if (lista.Count == 0)
+                {
+                    throw new Exception("No se encontraron clientes registrados!");
+                }
+
                 return lista;
 
             }
@@ -63,18 +68,6 @@ namespace APIBackend.Services
                     }).FirstOrDefault();
 
                 return clientePorId;
-
-                /*var cliente = _dbcontext.Clientes.FirstOrDefault(c => c.ClienteId == idCliente);
-                if (cliente != null)
-                {
-                    cliente.Persona = _dbcontext.Personas.FirstOrDefault(p => p.PersonaId == cliente.PersonaId);
-                }
-                else
-                {
-                    throw new Exception("No se encontro ningun cliente con ese id");
-                }
-
-                return cliente;*/
             }   
             catch (Exception ex)
             {
@@ -102,26 +95,6 @@ namespace APIBackend.Services
 
         public void EditarCliente(Cliente objCliente)
         {
-            /*Cliente oCliente = _dbcontext.Clientes.Find(objCliente.ClienteId);
-
-            if (oCliente == null)
-            {
-                throw new ArgumentException("Cliente no encontrado");
-            }*/
-
-            /*try
-            {
-                oCliente.Contrasena = objCliente.Contrasena ?? oCliente.Contrasena;
-                oCliente.Estado = objCliente.Estado ?? oCliente.Estado;
-
-                _dbcontext.Clientes.Update(oCliente);
-                _dbcontext.SaveChanges();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Error al editar el cliente", ex);
-            }*/
-
             if (objCliente == null)
             {
                 throw new ArgumentNullException(nameof(objCliente));
@@ -143,25 +116,6 @@ namespace APIBackend.Services
 
         public void EliminarCliente(int idCliente)
         {
-            /*Cliente oCliente = _dbcontext.Clientes.Find(idCliente);
-            Persona oPersona = _dbcontext.Personas.Find(idCliente);
-
-            if (oCliente == null || oPersona == null)
-            {
-                throw new ArgumentException("Cliente o persona no encontrada");
-            }
-
-            try
-            {
-                _dbcontext.Clientes.Remove(oCliente);
-                _dbcontext.Personas.Remove(oPersona);
-                _dbcontext.SaveChanges();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Error al eliminar el cliente", ex);
-            }*/
-
             var clienteExistente = _dbcontext.Clientes.FirstOrDefault(c => c.ClienteId == idCliente);
             if (clienteExistente != null)
             {
