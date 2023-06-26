@@ -31,10 +31,6 @@ CREATE TABLE cuentas (
 );
 GO
 
-SELECT * FROM cuentas
-SELECT * FROM clientes
-
--- Crear la tabla movimientos con identidad en la columna movimiento_id
 CREATE TABLE movimientos (
     movimiento_id INT IDENTITY(1,1) PRIMARY KEY,
     cuenta_id INT FOREIGN KEY REFERENCES cuentas(cuenta_id),
@@ -45,21 +41,21 @@ CREATE TABLE movimientos (
 );
 GO
 
--- Insertar nuevos datos de prueba en la tabla persona
+SELECT * FROM persona
+SELECT * FROM clientes
+
 INSERT INTO persona (nombre, genero, telefono, direccion)
 VALUES ('Juan Pérez', 'M', '555-1234', 'Calle Principal 123'),
        ('María Gómez', 'F', '555-5678', 'Avenida Central 456'),
        ('Carlos Ramírez', 'M', '555-9876', 'Paseo del Sol 789');
 GO
 
--- Insertar nuevos datos de prueba en la tabla clientes
 INSERT INTO clientes (persona_id, contrasena, estado)
 VALUES (1, '123456', 'Activo'),
        (2, 'abcdef', 'Activo'),
        (3, 'qwerty', 'Inactivo');
 GO
 
--- Insertar nuevos datos de prueba en la tabla cuentas
 INSERT INTO cuentas (cliente_id, numero_cuenta, tipo_cuenta, saldo_inicial, estado)
 VALUES (1, '123456789', 'Ahorros', 5000.00, 'Activa'),
        (1, '987654321', 'Corriente', 10000.00, 'Activa'),
@@ -67,7 +63,6 @@ VALUES (1, '123456789', 'Ahorros', 5000.00, 'Activa'),
        (3, '456789123', 'Corriente', 12000.00, 'Activa');
 GO
 
--- Insertar nuevos datos de prueba en la tabla movimientos
 INSERT INTO movimientos (cuenta_id, fecha_movimiento, tipo_movimiento, valor_movimiento, saldo_disponible)
 VALUES (1, '2022-02-01 10:30:00', 'Depósito', 1000.00, 6000.00),
        (1, '2022-02-05 15:45:00', 'Retiro', -500.00, 5500.00),
@@ -85,7 +80,6 @@ SELECT COUNT(*) AS cantidad_movimientos
 FROM movimientos
 WHERE cuenta_id = 1;
 
---Eliminacion de tablas
 IF OBJECT_ID('movimientos', 'U') IS NOT NULL
     DROP TABLE movimientos;
 
@@ -97,3 +91,5 @@ IF OBJECT_ID('clientes', 'U') IS NOT NULL
 
 IF OBJECT_ID('persona', 'U') IS NOT NULL
     DROP TABLE persona;
+
+DROP DATABASE BACKENDAPI
