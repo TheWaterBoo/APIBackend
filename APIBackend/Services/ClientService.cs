@@ -19,7 +19,7 @@ namespace APIBackend.Services
         {
             try
             {
-                var lista = _dbcontext.Clientes.Include(c => c.Persona)
+                List<ClienteRes> lista = _dbcontext.Clientes.Include(c => c.Persona)
                     .Select(c => new ClienteRes
                     {
                         ID = (int)c.PersonaId,
@@ -30,13 +30,7 @@ namespace APIBackend.Services
                         Estado = c.Estado
                     }).ToList();
 
-                if (lista.Count == 0)
-                {
-                    throw new Exception("No se encontraron clientes registrados!");
-                }
-
                 return lista;
-
             }
             catch (Exception ex)
             {
