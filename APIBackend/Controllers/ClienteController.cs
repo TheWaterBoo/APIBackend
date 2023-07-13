@@ -22,17 +22,10 @@ namespace APIBackend.Controllers
         //Obtener toda la lista de clientes
         [HttpGet]
         [Route("ListarClientes")]
-        public IActionResult ListarClientes() 
+        public IActionResult ListarClientes()
         {
-            try
-            {
-                var lista = _clientService.ListarClientes();
-                return StatusCode(StatusCodes.Status200OK, new { response = lista });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, new { mensaje = ex.Message });
-            }
+            var lista = _clientService.ListarClientes();
+            return StatusCode(StatusCodes.Status200OK, new { response = lista });
         }
 
         //Obtener cliente por id
@@ -41,15 +34,8 @@ namespace APIBackend.Controllers
 
         public IActionResult Cliente(int idCliente)
         {
-            try
-            {
-                var cliente = _clientService.ObtenerCliente(idCliente);
-                return StatusCode(StatusCodes.Status200OK, new { response = cliente });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status200OK, new { mensaje = ex.Message });
-            }
+            var cliente = _clientService.ObtenerCliente(idCliente);
+            return StatusCode(StatusCodes.Status200OK, new { response = cliente });
         }
 
         //Crear cliente nuevo (incluye persona tambien)
@@ -57,15 +43,8 @@ namespace APIBackend.Controllers
         [Route("crearCliente")]
         public IActionResult GuardarCliente([FromBody] Cliente objCliente)
         {
-            try
-            {
-                _clientService.GuardarCliente(objCliente);
-                return StatusCode(StatusCodes.Status200OK, new { mensaje = "cliente guardado" });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status200OK, new { mensaje = ex.Message });
-            }
+             _clientService.GuardarCliente(objCliente);
+             return StatusCode(StatusCodes.Status200OK, new { mensaje = "cliente guardado" });
         }
 
         //Editar Cliente ya existente
@@ -73,15 +52,8 @@ namespace APIBackend.Controllers
         [Route("editarCliente")]
         public IActionResult EditarCliente([FromBody] Cliente objCliente)
         {
-            try
-            {
-                _clientService.EditarCliente(objCliente);
-                return StatusCode(StatusCodes.Status200OK, new { mensaje = "Cliente actualizado!"});
-            }
-            catch(Exception ex)
-            {
-                return StatusCode(StatusCodes.Status200OK, new { mensaje = ex.Message });
-            }
+            _clientService.EditarCliente(objCliente);
+            return StatusCode(StatusCodes.Status200OK, new { mensaje = "Cliente actualizado!"});
         }
 
         [HttpDelete]
